@@ -4,20 +4,21 @@ import ReactFlow, {
   ReactFlowProvider,
   Background,
   MiniMap,
+  Panel,
   Controls,
   useNodesState,
   useEdgesState,
   useReactFlow,
 } from "reactflow";
 
-import { initialNodes, nodeTypes } from "./nodes";
-import { initialEdges } from "./edges";
+import { initialEdges, initialNodes, nodeTypes } from "./graph";
 import "reactflow/dist/style.css";
 
 const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
 
+// All options are listed https://github.com/dagrejs/dagre/wiki#configuring-the-layout
 const getLayoutedElements = (nodes, edges, options) => {
-  g.setGraph({ rankdir: options.direction });
+  g.setGraph({ rankdir: options.direction, ranker: options.alg });
 
   edges.forEach((edge) => g.setEdge(edge.source, edge.target));
   nodes.forEach((node) => g.setNode(node.id, node));
@@ -40,8 +41,8 @@ const LayoutFlow = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onLayout = useCallback(
-    (direction) => {
-      const layouted = getLayoutedElements(nodes, edges, { direction });
+    (direction,alg) => {
+      const layouted = getLayoutedElements(nodes, edges, { direction, alg });
 
       setNodes([...layouted.nodes]);
       setEdges([...layouted.edges]);
@@ -65,6 +66,12 @@ const LayoutFlow = () => {
       <Background />
       <MiniMap />
       <Controls />
+      <Panel position="top-right" className="flex flex-col">
+        <button className='bg-lime-200 p-1 rounded-md m-1' onClick={() => onLayout('TB','longest-path')}>vertical layout</button>
+        <button className='bg-lime-200 p-1 rounded-md m-1' onClick={() => onLayout('LR','network-simplex')}>Horizontal / Network Simplex</button>
+        <button className='bg-lime-200 p-1 rounded-md m-1' onClick={() => onLayout('LR','longest-path')}>Horizontal / Longest Path</button>
+        <button className='bg-lime-200 p-1 rounded-md m-1' onClick={() => onLayout('LR','tight-tree')}>Horizontal / Tight Tree</button>
+      </Panel>
     </ReactFlow>
   );
 };

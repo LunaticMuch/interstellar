@@ -1,6 +1,8 @@
 import { Position, Handle } from "reactflow";
 
+
 function TableNode({ id, data }) {
+
   return (
     <>
       <table className="border-separate rounded-lg border-2 border-black bg-white font-sans">
@@ -16,15 +18,15 @@ function TableNode({ id, data }) {
             <tr key={index}>
               <td>
                 <div className="relative">
-                  {row}
-                  <Handle
+                  {row.name}
+                  {row.isBoundToObject && <Handle
                     key={index}
                     className="border-3 h-2 w-2 bg-yellow-300 -right-2"
                     type="source"
-                    id={index}
+                    id={row.name}
                     position={Position.Right}
                     isConnectable={false}
-                  />
+                  />}
          
                 </div>
               </td>
