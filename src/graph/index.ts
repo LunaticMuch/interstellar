@@ -21,13 +21,15 @@ export const initialNodes = allTypes
     if (
       type.kind !== "SCALAR" &&
       type.kind !== "ENUM" &&
-      !type.name.startsWith("__")
+      type.kind !== "INPUT_OBJECT" &&
+      !type.name.startsWith("__") &&
+      !type.name.startsWith("_")
     ) {
       return {
         id: type.name,
         type: "tableNode",
         position: { x: 10, y: 10 },
-        data: type.fields.map((field) => {
+        data: type.fields?.map((field) => {
           const unwrappedFieldType = unwrapType(field.type);
           let isBoundToObject = true;
           if (
@@ -53,10 +55,11 @@ export const initialEdges = allTypes
     if (
       type.kind !== "SCALAR" &&
       type.kind !== "ENUM" &&
-      !type.name.startsWith("__")
+      type.kind !== "INPUT_OBJECT" &&
+      !type.name.startsWith("__") &&
+      !type.name.startsWith("_")
     ) {
-      return type.fields
-        .map((field) => {
+      return type.fields?.map((field) => {
           const unwrappedFieldType = unwrapType(field.type);
           if (
             unwrappedFieldType.kind !== "SCALAR" &&
@@ -75,7 +78,10 @@ export const initialEdges = allTypes
     }
   })
   .filter((item) => item)
-  .reduce((elem1, elem2) => elem1.concat(elem2));
+  .reduce((elem1, elem2) => elem1.concat(elem2))
+  // FIXME: this should be illegal - horrible hack
+  .filter((item) => item.id !== 'Query-_entities')
+  .filter((item) => item.id !== 'Query-_service');
 
 
 export const nodeTypes = {

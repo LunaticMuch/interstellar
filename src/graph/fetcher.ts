@@ -1,7 +1,7 @@
 import { getIntrospectionQuery } from "graphql";
 
 function graphQLFetcher() {
-  return fetch("https://swapi-graphql.netlify.app/.netlify/functions/index", {
+  return fetch("http://localhost:7443/graphql", {
     method: "post",
     headers: {
       Accept: "application/json",
